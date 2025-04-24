@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d968f0f4b6d1ec24ab16607f2a2b077e, type: 3}
+  m_Name: Happiness
+  m_EditorClassIdentifier: 
+  needName: Happiness
+  maxValue: 100
+  _currentValue: 53.1223
+  strategy: {fileID: 11400000, guid: 10d15810fe6bfd042bce5bec6bf0b8b8, type: 2}
+  barColor: {r: 0, g: 1, b: 0, a: 1}
+  icon: {fileID: 0}
+  restoreSound: {fileID: 0}
+  restoreEffect: {fileID: 0}
