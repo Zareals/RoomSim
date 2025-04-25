@@ -5,6 +5,14 @@ public class OrthoCameraController : MonoBehaviour
     [Header("Rotation Settings")]
     public float rotationSpeed = 5f;
     public bool allowRotation = true;
+    [Range(-180f, 180f)] public float minRotationY = -180f;
+    [Range(-180f, 180f)] public float maxRotationY = 180f;
+    public bool snapToAngles = false;
+    [Range(1f, 90f)] public float snapAngleInterval = 45f;
+    public float rotationDamping = 5f;
+    
+    [Header("Initial Rotation")]
+    public Vector3 initialRotation = new Vector3(32f, -135f, 0f);
     
     [Header("Zoom Settings")]
     public float zoomSpeed = 5f;
@@ -23,8 +31,7 @@ public class OrthoCameraController : MonoBehaviour
     public Vector3 targetOffset = Vector3.zero;
     
     private Camera orthoCamera;
-    private float currentRotationY = 0f;
-    private float desiredOrthoSize;
+    private float targetRotationY;
     private Vector3 dragOrigin;
     private Vector3 cameraStartPosition;
     
@@ -43,7 +50,11 @@ public class OrthoCameraController : MonoBehaviour
             orthoCamera.orthographic = true;
         }
         
-        desiredOrthoSize = orthoCamera.orthographicSize;
+        // Set initial rotation
+        transform.rotation = Quaternion.Euler(initialRotation);
+        targetRotationY = initialRotation.y;
+        
+        orthoCamera.orthographicSize = Mathf.Clamp(orthoCamera.orthographicSize, minOrthoSize, maxOrthoSize);
         cameraStartPosition = transform.position;
         
         if (target != null)
@@ -64,16 +75,9 @@ public class OrthoCameraController : MonoBehaviour
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scrollInput) > 0.01f)
         {
-            desiredOrthoSize -= scrollInput * zoomSpeed;
-            desiredOrthoSize = Mathf.Clamp(desiredOrthoSize, minOrthoSize, maxOrthoSize);
+            float newSize = orthoCamera.orthographicSize - scrollInput * zoomSpeed;
+            orthoCamera.orthographicSize = Mathf.Clamp(newSize, minOrthoSize, maxOrthoSize);
         }
-        
-        // Smooth zoom
-        orthoCamera.orthographicSize = Mathf.Lerp(
-            orthoCamera.orthographicSize, 
-            desiredOrthoSize, 
-            Time.deltaTime * zoomDamping
-        );
     }
     
     void HandleRotation()
@@ -83,11 +87,26 @@ public class OrthoCameraController : MonoBehaviour
         if (Input.GetMouseButton(1)) // Right mouse button
         {
             float rotationInput = Input.GetAxis("Mouse X");
-            currentRotationY += rotationInput * rotationSpeed;
+            targetRotationY += rotationInput * rotationSpeed;
             
-            // For orthographic, we typically only want to rotate around Y axis
-            transform.rotation = Quaternion.Euler(90f, currentRotationY, 0f);
+            // Apply rotation limits
+            targetRotationY = Mathf.Clamp(targetRotationY, minRotationY, maxRotationY);
+            
+            // Apply snapping if enabled
+            if (snapToAngles)
+            {
+                targetRotationY = Mathf.Round(targetRotationY / snapAngleInterval) * snapAngleInterval;
+            }
         }
+        
+        // Smooth rotation while maintaining initial X and Z rotations
+        float currentY = transform.eulerAngles.y;
+        float newY = Mathf.LerpAngle(currentY, targetRotationY, Time.deltaTime * rotationDamping);
+        transform.rotation = Quaternion.Euler(
+            initialRotation.x, 
+            newY, 
+            initialRotation.z
+        );
     }
     
     void HandlePanning()
@@ -130,26 +149,31 @@ public class OrthoCameraController : MonoBehaviour
         if (target != null)
         {
             transform.position = target.position + targetOffset;
-            currentRotationY = 0f;
-            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         }
         else
         {
             transform.position = cameraStartPosition;
-            currentRotationY = 0f;
-            transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         }
+        
+        // Reset to initial rotation
+        targetRotationY = initialRotation.y;
+        transform.rotation = Quaternion.Euler(initialRotation);
     }
     
-    // Call this from a UI button if needed
     public void ToggleRotation(bool enabled)
     {
         allowRotation = enabled;
     }
     
-    // Call this from a UI button if needed
     public void TogglePanning(bool enabled)
     {
         allowPanning = enabled;
+    }
+    
+    public void SetRotationLimits(float min, float max)
+    {
+        minRotationY = Mathf.Clamp(min, -180f, 180f);
+        maxRotationY = Mathf.Clamp(max, -180f, 180f);
+        targetRotationY = Mathf.Clamp(targetRotationY, minRotationY, maxRotationY);
     }
 }

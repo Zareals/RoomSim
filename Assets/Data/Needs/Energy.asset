@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   needName: Energy
   maxValue: 100
-  _currentValue: 53.1223
+  _currentValue: 90.24008
   strategy: {fileID: 11400000, guid: 10d15810fe6bfd042bce5bec6bf0b8b8, type: 2}
   barColor: {r: 0, g: 1, b: 0, a: 1}
   icon: {fileID: 0}
-  restoreSound: {fileID: 0}
+  restoreSound: {fileID: 8300000, guid: 41766a13c8c27ec40951eef804118841, type: 3}
   restoreEffect: {fileID: 0}

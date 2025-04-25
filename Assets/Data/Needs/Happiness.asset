@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   needName: Happiness
   maxValue: 100
-  _currentValue: 53.1223
+  _currentValue: 37.808266
   strategy: {fileID: 11400000, guid: 10d15810fe6bfd042bce5bec6bf0b8b8, type: 2}
   barColor: {r: 0, g: 1, b: 0, a: 1}
   icon: {fileID: 0}
-  restoreSound: {fileID: 0}
+  restoreSound: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
   restoreEffect: {fileID: 0}
