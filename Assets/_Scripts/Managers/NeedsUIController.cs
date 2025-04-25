@@ -16,7 +16,6 @@ public class NeedsUIController : MonoBehaviour
 
     private void Start()
     {
-        // Initialize slider ranges
         foreach (var needUI in _needUIs)
         {
             if (needUI.slider != null)
@@ -33,11 +32,9 @@ public class NeedsUIController : MonoBehaviour
         {
             if (needUI.need != null && needUI.slider != null)
             {
-                // Update slider value (using direct value instead of normalized)
                 needUI.slider.value = needUI.need.CurrentValue;
                 
-                // Update text
-                needUI.needText.text = $"{Mathf.RoundToInt(needUI.need.CurrentValue)} / <color=#d2d2d2>{needUI.need.maxValue}</color>";
+                needUI.needText.text = $" {needUI.need.name} : {Mathf.RoundToInt(needUI.need.CurrentValue)} / <color=#d2d2d2>{needUI.need.maxValue}</color>";
             }
         }
     }
